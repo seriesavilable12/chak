@@ -1,0 +1,2144 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 36,
+   "id": "a5797b32",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import selenium\n",
+    "import pandas as pd\n",
+    "from selenium import webdriver\n",
+    "import warnings\n",
+    "warnings.filterwarnings('ignore')\n",
+    "from selenium.webdriver.common.by import By\n",
+    "import time\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "dc225db5",
+   "metadata": {},
+   "source": [
+    "# https://chromedriver.chromium.org/downloads"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ca1c7c33",
+   "metadata": {},
+   "source": [
+    "# Ans.1"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 72,
+   "id": "f99f7ad8",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "driver=webdriver.Chrome(r\"C:\\Users\\ADMIN\\Downloads\\chromedrive.exe\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 73,
+   "id": "b75189e6",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "driver = webdriver.Chrome(r\"Chromedriver.exe\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 74,
+   "id": "c8b55ecd",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "driver.get(\"https://www.naukri.com/\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 75,
+   "id": "18ecf7d1",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "designation=driver.find_element(By.CLASS_NAME,\"suggestor-input\")\n",
+    "designation.send_keys('Data Analyst')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 76,
+   "id": "f37cf71f",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "location=driver.find_element(By.XPATH,\"/html/body/div[1]/div[7]/div/div/div[5]/div/div/div/div[1]/div/input\")\n",
+    "location.send_keys('Banglore')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 77,
+   "id": "6f4c48a0",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "search = driver.find_element(By.CLASS_NAME,\"qsbSubmit\")\n",
+    "search.click()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 78,
+   "id": "10843661",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "job_title=[]\n",
+    "job_location=[]\n",
+    "company_name=[]\n",
+    "experience_required=[]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 79,
+   "id": "9bcf2625",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#scraping job title from the given page\n",
+    "title_tags = driver.find_elements(By.XPATH,'//a[@class=\"title ellipsis\"]')\n",
+    "for i in title_tags[0:10]:\n",
+    "    title =i.text\n",
+    "    job_title.append(title)\n",
+    "    \n",
+    "#scraping ob location from the given page\n",
+    "location_tags = driver.find_elements(By.XPATH,'//span[@class=\"ellipsis fleft locWdth\"]')\n",
+    "for i in location_tags[0:10]:\n",
+    "    location = i.text\n",
+    "    job_location.append(location)\n",
+    "    \n",
+    "#scraping company name from the given page\n",
+    "company_tags = driver.find_elements(By.XPATH,\"//a[@class='subTitle ellipsis fleft']\")\n",
+    "for i in company_tags[0:10]:\n",
+    "    company = i.text\n",
+    "    company_name.append(company)\n",
+    "    \n",
+    "#scraping job Experience from the given page\n",
+    "experience_tags = driver.find_elements(By.XPATH,'//span[@class=\"ellipsis fleft expwdth\"]')\n",
+    "for i in experience_tags[0:10]:\n",
+    "    exp = i.text\n",
+    "    experience_required.append(exp)\n",
+    "    \n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 80,
+   "id": "55f046f0",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "10 10 10 10\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(len(job_title),len(job_location),len(company_name),len(experience_required))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 63,
+   "id": "b3d36a9e",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Title</th>\n",
+       "      <th>Location</th>\n",
+       "      <th>Company_name</th>\n",
+       "      <th>Experience</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>Data Engineer/Data Analyst</td>\n",
+       "      <td>Hybrid - Kolkata, Hyderabad/Secunderabad, Pune...</td>\n",
+       "      <td>TeamLease</td>\n",
+       "      <td>6-11 Yrs</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>Data Analyst</td>\n",
+       "      <td>Bangalore/Bengaluru</td>\n",
+       "      <td>TeamLease</td>\n",
+       "      <td>3-6 Yrs</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>Data Analyst</td>\n",
+       "      <td>Bangalore/Bengaluru</td>\n",
+       "      <td>TeamLease</td>\n",
+       "      <td>1-4 Yrs</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>Data Analyst - Contractual</td>\n",
+       "      <td>Bangalore/Bengaluru</td>\n",
+       "      <td>TeamLease</td>\n",
+       "      <td>2-3 Yrs</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>Data Analyst - Contractual</td>\n",
+       "      <td>Bangalore/Bengaluru</td>\n",
+       "      <td>TeamLease</td>\n",
+       "      <td>2-3 Yrs</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>5</th>\n",
+       "      <td>Data Analyst</td>\n",
+       "      <td>Bangalore/Bengaluru</td>\n",
+       "      <td>TeamLease</td>\n",
+       "      <td>5-8 Yrs</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>6</th>\n",
+       "      <td>Procurement Data Analyst</td>\n",
+       "      <td>Bangalore/Bengaluru</td>\n",
+       "      <td>TeamLease</td>\n",
+       "      <td>2-3 Yrs</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>7</th>\n",
+       "      <td>Data Analyst</td>\n",
+       "      <td>Bangalore/Bengaluru</td>\n",
+       "      <td>TeamLease</td>\n",
+       "      <td>5-9 Yrs</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>8</th>\n",
+       "      <td>Data Analyst</td>\n",
+       "      <td>Bangalore/Bengaluru</td>\n",
+       "      <td>TeamLease</td>\n",
+       "      <td>2-4 Yrs</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9</th>\n",
+       "      <td>Data Analyst || Bangalore || Male/ Female || 1...</td>\n",
+       "      <td>Bangalore/Bengaluru</td>\n",
+       "      <td>TeamLease</td>\n",
+       "      <td>1-5 Yrs</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                                               Title  \\\n",
+       "0                         Data Engineer/Data Analyst   \n",
+       "1                                       Data Analyst   \n",
+       "2                                       Data Analyst   \n",
+       "3                         Data Analyst - Contractual   \n",
+       "4                         Data Analyst - Contractual   \n",
+       "5                                       Data Analyst   \n",
+       "6                           Procurement Data Analyst   \n",
+       "7                                       Data Analyst   \n",
+       "8                                       Data Analyst   \n",
+       "9  Data Analyst || Bangalore || Male/ Female || 1...   \n",
+       "\n",
+       "                                            Location Company_name Experience  \n",
+       "0  Hybrid - Kolkata, Hyderabad/Secunderabad, Pune...    TeamLease   6-11 Yrs  \n",
+       "1                                Bangalore/Bengaluru    TeamLease    3-6 Yrs  \n",
+       "2                                Bangalore/Bengaluru    TeamLease    1-4 Yrs  \n",
+       "3                                Bangalore/Bengaluru    TeamLease    2-3 Yrs  \n",
+       "4                                Bangalore/Bengaluru    TeamLease    2-3 Yrs  \n",
+       "5                                Bangalore/Bengaluru    TeamLease    5-8 Yrs  \n",
+       "6                                Bangalore/Bengaluru    TeamLease    2-3 Yrs  \n",
+       "7                                Bangalore/Bengaluru    TeamLease    5-9 Yrs  \n",
+       "8                                Bangalore/Bengaluru    TeamLease    2-4 Yrs  \n",
+       "9                                Bangalore/Bengaluru    TeamLease    1-5 Yrs  "
+      ]
+     },
+     "execution_count": 63,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "import pandas as pd\n",
+    "df = pd.DataFrame({'Title':job_title,'Location':job_location,'Company_name':company_name,'Experience':experience_required})\n",
+    "df"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "cc92c948",
+   "metadata": {},
+   "source": [
+    "# Ans.2->"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 38,
+   "id": "fe3aedf0",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import selenium\n",
+    "import pandas as pd\n",
+    "from selenium import webdriver\n",
+    "import warnings\n",
+    "warnings.filterwarnings('ignore')\n",
+    "from selenium.webdriver.common.by import By\n",
+    "import time"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 39,
+   "id": "3139f228",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "driver=webdriver.Chrome(r\"C:\\Users\\ADMIN\\Downloads\\chromedrive.exe\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 40,
+   "id": "6c954b56",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "driver.get(\"https://www.naukri.com/\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 41,
+   "id": "b7a05779",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "designation=driver.find_element(By.CLASS_NAME,\"suggestor-input\")\n",
+    "designation.send_keys('Data Scientist')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 42,
+   "id": "dad57669",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "location=driver.find_element(By.XPATH,\"/html/body/div[1]/div[7]/div/div/div[5]/div/div/div/div[1]/div/input\")\n",
+    "location.send_keys('Banglore')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 43,
+   "id": "5e7901e3",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "search = driver.find_element(By.CLASS_NAME,\"qsbSubmit\")\n",
+    "search.click()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 87,
+   "id": "e1f37df5",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "job_title=[]\n",
+    "job_location=[]\n",
+    "company_name=[]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 88,
+   "id": "397737b6",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#scraping job title from the given page\n",
+    "title_tags = driver.find_elements(By.XPATH,'//a[@class=\"title ellipsis\"]')\n",
+    "for i in title_tags[0:10]:\n",
+    "    title =i.text\n",
+    "    job_title.append(title)\n",
+    "    \n",
+    "#scraping ob location from the given page\n",
+    "location_tags = driver.find_elements(By.XPATH,'//span[@class=\"ellipsis fleft locWdth\"]')\n",
+    "for i in location_tags[0:10]:\n",
+    "    location = i.text\n",
+    "    job_location.append(location)\n",
+    "    \n",
+    "#scraping company name from the given page\n",
+    "company_tags = driver.find_elements(By.XPATH,\"//a[@class='subTitle ellipsis fleft']\")\n",
+    "for i in company_tags[0:10]:\n",
+    "    company = i.text\n",
+    "    company_name.append(company)\n",
+    "    "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 89,
+   "id": "1d1a8871",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "10 10 10\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(len(job_title),len(job_location),len(company_name))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 91,
+   "id": "c6839e60",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Title</th>\n",
+       "      <th>Location</th>\n",
+       "      <th>Company_name</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>Data Science Professional - IBM SPSS Statistic...</td>\n",
+       "      <td>Noida, Mumbai, Pune, Chennai, Bangalore/Bengaluru</td>\n",
+       "      <td>Hexaware Technologies</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>Data Science Specialist</td>\n",
+       "      <td>Kolkata, Mumbai, Hyderabad/Secunderabad, Pune,...</td>\n",
+       "      <td>Accenture</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>Analystics &amp; Modeling Specialist</td>\n",
+       "      <td>Kolkata, Mumbai, Hyderabad/Secunderabad, Pune,...</td>\n",
+       "      <td>Accenture</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>Senior data scientist</td>\n",
+       "      <td>Mumbai, Pune, Chennai, Gurgaon/Gurugram, Banga...</td>\n",
+       "      <td>Fractal Analytics</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>Data Scientist_NLP</td>\n",
+       "      <td>Mumbai, Pune, Chennai, Gurgaon/Gurugram, Banga...</td>\n",
+       "      <td>Fractal Analytics</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>5</th>\n",
+       "      <td>Data Scientist</td>\n",
+       "      <td>Mumbai, Pune, Chennai, Gurgaon/Gurugram, Banga...</td>\n",
+       "      <td>Fractal Analytics</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>6</th>\n",
+       "      <td>Machine Learning (AI) Architect</td>\n",
+       "      <td>Kolkata, Mumbai, New Delhi, Hyderabad/Secunder...</td>\n",
+       "      <td>Persistent</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>7</th>\n",
+       "      <td>Manager - Innovations Hub - Machine Learning</td>\n",
+       "      <td>Mumbai, Hyderabad/Secunderabad, Bangalore/Beng...</td>\n",
+       "      <td>PwC</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>8</th>\n",
+       "      <td>Senior Engineer Consultant Data Science</td>\n",
+       "      <td>Bangalore/Bengaluru</td>\n",
+       "      <td>Verizon</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9</th>\n",
+       "      <td>Senior Engineer Consultant-Data Science</td>\n",
+       "      <td>Bangalore/Bengaluru</td>\n",
+       "      <td>Verizon</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                                               Title  \\\n",
+       "0  Data Science Professional - IBM SPSS Statistic...   \n",
+       "1                            Data Science Specialist   \n",
+       "2                   Analystics & Modeling Specialist   \n",
+       "3                              Senior data scientist   \n",
+       "4                                 Data Scientist_NLP   \n",
+       "5                                     Data Scientist   \n",
+       "6                    Machine Learning (AI) Architect   \n",
+       "7       Manager - Innovations Hub - Machine Learning   \n",
+       "8            Senior Engineer Consultant Data Science   \n",
+       "9            Senior Engineer Consultant-Data Science   \n",
+       "\n",
+       "                                            Location           Company_name  \n",
+       "0  Noida, Mumbai, Pune, Chennai, Bangalore/Bengaluru  Hexaware Technologies  \n",
+       "1  Kolkata, Mumbai, Hyderabad/Secunderabad, Pune,...              Accenture  \n",
+       "2  Kolkata, Mumbai, Hyderabad/Secunderabad, Pune,...              Accenture  \n",
+       "3  Mumbai, Pune, Chennai, Gurgaon/Gurugram, Banga...      Fractal Analytics  \n",
+       "4  Mumbai, Pune, Chennai, Gurgaon/Gurugram, Banga...      Fractal Analytics  \n",
+       "5  Mumbai, Pune, Chennai, Gurgaon/Gurugram, Banga...      Fractal Analytics  \n",
+       "6  Kolkata, Mumbai, New Delhi, Hyderabad/Secunder...             Persistent  \n",
+       "7  Mumbai, Hyderabad/Secunderabad, Bangalore/Beng...                    PwC  \n",
+       "8                                Bangalore/Bengaluru                Verizon  \n",
+       "9                                Bangalore/Bengaluru                Verizon  "
+      ]
+     },
+     "execution_count": 91,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "import pandas as pd\n",
+    "df = pd.DataFrame({'Title':job_title,'Location':job_location,'Company_name':company_name})\n",
+    "df"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "0eeb1397",
+   "metadata": {},
+   "source": [
+    "# Ans.3"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 63,
+   "id": "d2887eff",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import selenium\n",
+    "import pandas as pd\n",
+    "from selenium import webdriver\n",
+    "import warnings\n",
+    "warnings.filterwarnings('ignore')\n",
+    "from selenium.webdriver.common.by import By\n",
+    "import time"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 64,
+   "id": "6eed1142",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "driver=webdriver.Chrome(r\"C:\\Users\\ADMIN\\Downloads\\chromedrive.exe\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 65,
+   "id": "7ee71603",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "driver.get(\"https://www.naukri.com/\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 66,
+   "id": "2ae1aa5e",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "designation=driver.find_element(By.CLASS_NAME,\"suggestor-input\")\n",
+    "designation.send_keys('Data Scientist')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 67,
+   "id": "9a018313",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "location=driver.find_element(By.XPATH,\"/html/body/div[1]/div[7]/div/div/div[5]/div/div/div/div[1]/div/input\")\n",
+    "location.send_keys('Delhi/NCR')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 68,
+   "id": "ba279d22",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "search = driver.find_element(By.CLASS_NAME,\"qsbSubmit\")\n",
+    "search.click()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 69,
+   "id": "4f167dc4",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "job_title=[]\n",
+    "job_location=[]\n",
+    "company_name=[]\n",
+    "experience_required=[]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 70,
+   "id": "0adcf2a5",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#scraping job title from the given page\n",
+    "title_tags = driver.find_elements(By.XPATH,'//a[@class=\"title ellipsis\"]')\n",
+    "for i in title_tags[0:10]:\n",
+    "    title =i.text\n",
+    "    job_title.append(title)\n",
+    "    \n",
+    "#scraping ob location from the given page\n",
+    "location_tags = driver.find_elements(By.XPATH,'//span[@class=\"ellipsis fleft locWdth\"]')\n",
+    "for i in location_tags[0:10]:\n",
+    "    location = i.text\n",
+    "    job_location.append(location)\n",
+    "    \n",
+    "#scraping company name from the given page\n",
+    "company_tags = driver.find_elements(By.XPATH,'//a[@class=\"subTitle ellipsis fleft\"]')\n",
+    "for i in company_tags[0:10]:\n",
+    "    company = i.text\n",
+    "    company_name.append(company)\n",
+    "    \n",
+    "#scraping job Experience from the given page\n",
+    "experience_tags = driver.find_elements(By.XPATH,'//span[@class=\"ellipsis fleft expwdth\"]')\n",
+    "for i in experience_tags[0:10]:\n",
+    "    exp = i.text\n",
+    "    experience_required.append(exp)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 71,
+   "id": "4ca9497d",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "10 10 10 10\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(len(job_title),len(job_location),len(company_name),len(experience_required))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 72,
+   "id": "2187fe3a",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Title</th>\n",
+       "      <th>Location</th>\n",
+       "      <th>Company_name</th>\n",
+       "      <th>Experience</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>Data Scientist</td>\n",
+       "      <td>Temp. WFH - Kochi/Cochin, Kolkata, Hyderabad/S...</td>\n",
+       "      <td>Cognizant</td>\n",
+       "      <td>6-10 Yrs</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>Junior Data Scientist</td>\n",
+       "      <td>Kolkata, Mumbai, New Delhi, Hyderabad/Secunder...</td>\n",
+       "      <td>Analytos</td>\n",
+       "      <td>0-2 Yrs</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>Data Scientist</td>\n",
+       "      <td>Gurgaon/Gurugram, Bangalore/Bengaluru</td>\n",
+       "      <td>Blackbuck</td>\n",
+       "      <td>3-7 Yrs</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>Junior Data Scientist</td>\n",
+       "      <td>Gurgaon/Gurugram, United States (USA), Bulgaria</td>\n",
+       "      <td>Adidas</td>\n",
+       "      <td>1-6 Yrs</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>Data Scientist</td>\n",
+       "      <td>Kolkata, Mumbai, New Delhi, Hyderabad/Secunder...</td>\n",
+       "      <td>Tabsquare</td>\n",
+       "      <td>1-3 Yrs</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>5</th>\n",
+       "      <td>Data Scientist</td>\n",
+       "      <td>Kolkata, Mumbai, New Delhi, Hyderabad/Secunder...</td>\n",
+       "      <td>Analytos</td>\n",
+       "      <td>2-4 Yrs</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>6</th>\n",
+       "      <td>Analyst-Data Science</td>\n",
+       "      <td>Gurgaon/Gurugram</td>\n",
+       "      <td>AMERICAN EXPRESS</td>\n",
+       "      <td>0-3 Yrs</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>7</th>\n",
+       "      <td>Analyst-Data Science</td>\n",
+       "      <td>Gurgaon/Gurugram</td>\n",
+       "      <td>AMERICAN EXPRESS</td>\n",
+       "      <td>0-3 Yrs</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>8</th>\n",
+       "      <td>Senior Data Scientist</td>\n",
+       "      <td>Hyderabad/Secunderabad, Chenani, Gurgaon/Gurug...</td>\n",
+       "      <td>RecruitEForU</td>\n",
+       "      <td>3-8 Yrs</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9</th>\n",
+       "      <td>Assistant Manager/Senior Manager - Data Scientist</td>\n",
+       "      <td>Gurgaon/Gurugram, Bangalore/Bengaluru</td>\n",
+       "      <td>Huquo Consulting Pvt. Ltd</td>\n",
+       "      <td>2-7 Yrs</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                                               Title  \\\n",
+       "0                                     Data Scientist   \n",
+       "1                              Junior Data Scientist   \n",
+       "2                                     Data Scientist   \n",
+       "3                              Junior Data Scientist   \n",
+       "4                                     Data Scientist   \n",
+       "5                                     Data Scientist   \n",
+       "6                               Analyst-Data Science   \n",
+       "7                               Analyst-Data Science   \n",
+       "8                              Senior Data Scientist   \n",
+       "9  Assistant Manager/Senior Manager - Data Scientist   \n",
+       "\n",
+       "                                            Location  \\\n",
+       "0  Temp. WFH - Kochi/Cochin, Kolkata, Hyderabad/S...   \n",
+       "1  Kolkata, Mumbai, New Delhi, Hyderabad/Secunder...   \n",
+       "2              Gurgaon/Gurugram, Bangalore/Bengaluru   \n",
+       "3    Gurgaon/Gurugram, United States (USA), Bulgaria   \n",
+       "4  Kolkata, Mumbai, New Delhi, Hyderabad/Secunder...   \n",
+       "5  Kolkata, Mumbai, New Delhi, Hyderabad/Secunder...   \n",
+       "6                                   Gurgaon/Gurugram   \n",
+       "7                                   Gurgaon/Gurugram   \n",
+       "8  Hyderabad/Secunderabad, Chenani, Gurgaon/Gurug...   \n",
+       "9              Gurgaon/Gurugram, Bangalore/Bengaluru   \n",
+       "\n",
+       "                Company_name Experience  \n",
+       "0                  Cognizant   6-10 Yrs  \n",
+       "1                   Analytos    0-2 Yrs  \n",
+       "2                  Blackbuck    3-7 Yrs  \n",
+       "3                     Adidas    1-6 Yrs  \n",
+       "4                  Tabsquare    1-3 Yrs  \n",
+       "5                   Analytos    2-4 Yrs  \n",
+       "6           AMERICAN EXPRESS    0-3 Yrs  \n",
+       "7           AMERICAN EXPRESS    0-3 Yrs  \n",
+       "8               RecruitEForU    3-8 Yrs  \n",
+       "9  Huquo Consulting Pvt. Ltd    2-7 Yrs  "
+      ]
+     },
+     "execution_count": 72,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "import pandas as pd\n",
+    "df = pd.DataFrame({'Title':job_title,'Location':job_location,'Company_name':company_name,'Experience':experience_required})\n",
+    "df"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "3e5f8f06",
+   "metadata": {},
+   "source": [
+    "# Ans.6-"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 32,
+   "id": "25280b15",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import selenium\n",
+    "import pandas as pd\n",
+    "from selenium import webdriver\n",
+    "import warnings\n",
+    "warnings.filterwarnings('ignore')\n",
+    "from selenium.webdriver.common.by import By\n",
+    "import time"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 33,
+   "id": "86da8647",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "driver=webdriver.Chrome(r\"C:\\Users\\ADMIN\\Downloads\\chromedrive.exe\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 34,
+   "id": "084b28d6",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "driver.get(\"https://www.flipkart.com/\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 35,
+   "id": "7f3c30d1",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "search = driver.find_element(By.CLASS_NAME,\"_3704LK\")\n",
+    "search_button = driver.find_element(By.CLASS_NAME,\"L0Z3Pu\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 36,
+   "id": "11b9f386",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "search.send_keys(\"sneakers\")\n",
+    "search_button.click()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 37,
+   "id": "d86bff29",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "B_name=[]\n",
+    "Price_list=[]\n",
+    "Product_Description=[]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 38,
+   "id": "99c74944",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#scraping Brand name from the given page\n",
+    "B_tags = driver.find_elements(By.XPATH,'//div[@class=\"_2WkVRV\"]')\n",
+    "for i in B_tags[0:100]:\n",
+    "    Brand =i.text\n",
+    "    B_name.append(Brand)\n",
+    "    \n",
+    "#scraping Price_list from the page\n",
+    "Price_tags = driver.find_elements(By.XPATH,'//div[@class=\"_30jeq3\"]')\n",
+    "for i in Price_tags[0:100]:\n",
+    "    Price = i.text\n",
+    "    Price_list.append(Price)\n",
+    "    \n",
+    "#scraping Poduct_Description from the page\n",
+    "Product_tags = driver.find_elements(By.XPATH,'//a[@class=\"IRpwTa\"]')\n",
+    "for i in Product_tags[0:100]:\n",
+    "    Description = i.text\n",
+    "    Product_Description.append(Description) "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 39,
+   "id": "1ab1bacb",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "40 40 37\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(len(B_name),len(Price_list),len(Product_Description))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 40,
+   "id": "0a17964e",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#scraping Brand name from the given page\n",
+    "B_tags = driver.find_elements(By.XPATH,'//div[@class=\"_2WkVRV\"]')\n",
+    "for i in B_tags[0:100]:\n",
+    "    Brand =i.text\n",
+    "    B_name.append(Brand)\n",
+    "    \n",
+    "#scraping Price_list from the page\n",
+    "Price_tags = driver.find_elements(By.XPATH,'//div[@class=\"_30jeq3\"]')\n",
+    "for i in Price_tags[0:100]:\n",
+    "    Price = i.text\n",
+    "    Price_list.append(Price)\n",
+    "    \n",
+    "#scraping Poduct_Description from the page\n",
+    "Product_tags = driver.find_elements(By.XPATH,'//a[@class=\"IRpwTa\"]')\n",
+    "for i in Product_tags[0:100]:\n",
+    "    Description = i.text\n",
+    "    Product_Description.append(Description) "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 41,
+   "id": "ad131ae9",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "80 80 74\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(len(B_name),len(Price_list),len(Product_Description))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 42,
+   "id": "867e1d87",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#scraping Brand name from the given page\n",
+    "B_tags = driver.find_elements(By.XPATH,'//div[@class=\"_2WkVRV\"]')\n",
+    "for i in B_tags[0:100]:\n",
+    "    Brand =i.text\n",
+    "    B_name.append(Brand)\n",
+    "    \n",
+    "#scraping Price_list from the page\n",
+    "Price_tags = driver.find_elements(By.XPATH,'//div[@class=\"_30jeq3\"]')\n",
+    "for i in Price_tags[0:100]:\n",
+    "    Price = i.text\n",
+    "    Price_list.append(Price)\n",
+    "    \n",
+    "#scraping Poduct_Description from the page\n",
+    "Product_tags = driver.find_elements(By.XPATH,'//a[@class=\"IRpwTa\"]')\n",
+    "for i in Product_tags[0:100]:\n",
+    "    Description = i.text\n",
+    "    Product_Description.append(Description) "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 44,
+   "id": "913786ec",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "100\n",
+      "100\n",
+      "100\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "(None, None, None)"
+      ]
+     },
+     "execution_count": 44,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "print(len(B_name[:100])),print(len(Price_list[:100])),print(len(Product_Description[:100]))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 48,
+   "id": "604b4afc",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "sneakers=pd.DataFrame({})\n",
+    "sneakers['B_name']=B_name[:100]\n",
+    "sneakers['Price_list']=Price_list[:100]\n",
+    "sneakers['Product_Description']=Product_Description[:100]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 49,
+   "id": "b6cdef32",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>B_name</th>\n",
+       "      <th>Price_list</th>\n",
+       "      <th>Product_Description</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>Labbin</td>\n",
+       "      <td>₹694</td>\n",
+       "      <td>Casual Sneakers ColourFul Block Shoes For Boys...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>BRUTON</td>\n",
+       "      <td>₹499</td>\n",
+       "      <td>Combo Pack Of 2 Casual Shoes Sneakers For Men</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>SFR</td>\n",
+       "      <td>₹299</td>\n",
+       "      <td>2006 Trenddy Fashion Sporty Casuals Sneakers R...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>AMICO</td>\n",
+       "      <td>₹387</td>\n",
+       "      <td>Sneakers For Men</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>aadi</td>\n",
+       "      <td>₹399</td>\n",
+       "      <td>Synthetic| Lightweight| Premiun| Comfort| Summ...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>...</th>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>95</th>\n",
+       "      <td>BIRDE</td>\n",
+       "      <td>₹299</td>\n",
+       "      <td>Lightweight,Comfort,Summer,Trendy,Walking,Outd...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>96</th>\n",
+       "      <td>obot</td>\n",
+       "      <td>₹849</td>\n",
+       "      <td>Thunder-01 White Canvas, Sneakers For Men</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>97</th>\n",
+       "      <td>Labbin</td>\n",
+       "      <td>₹499</td>\n",
+       "      <td>Latest Exclusive Affordable Collection of Tren...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>98</th>\n",
+       "      <td>aadi</td>\n",
+       "      <td>₹349</td>\n",
+       "      <td>Sneakers For Men</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>99</th>\n",
+       "      <td>Magnolia</td>\n",
+       "      <td>₹399</td>\n",
+       "      <td>Mesh |Lightweight|Comfort|Summer|Trendy|Walkin...</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>100 rows × 3 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "      B_name Price_list                                Product_Description\n",
+       "0     Labbin       ₹694  Casual Sneakers ColourFul Block Shoes For Boys...\n",
+       "1     BRUTON       ₹499      Combo Pack Of 2 Casual Shoes Sneakers For Men\n",
+       "2        SFR       ₹299  2006 Trenddy Fashion Sporty Casuals Sneakers R...\n",
+       "3      AMICO       ₹387                                   Sneakers For Men\n",
+       "4       aadi       ₹399  Synthetic| Lightweight| Premiun| Comfort| Summ...\n",
+       "..       ...        ...                                                ...\n",
+       "95     BIRDE       ₹299  Lightweight,Comfort,Summer,Trendy,Walking,Outd...\n",
+       "96      obot       ₹849          Thunder-01 White Canvas, Sneakers For Men\n",
+       "97    Labbin       ₹499  Latest Exclusive Affordable Collection of Tren...\n",
+       "98      aadi       ₹349                                   Sneakers For Men\n",
+       "99  Magnolia       ₹399  Mesh |Lightweight|Comfort|Summer|Trendy|Walkin...\n",
+       "\n",
+       "[100 rows x 3 columns]"
+      ]
+     },
+     "execution_count": 49,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "sneakers"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "064b137f",
+   "metadata": {},
+   "source": [
+    "# Ans4-"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 50,
+   "id": "7a8a30d1",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import selenium\n",
+    "import pandas as pd\n",
+    "from selenium import webdriver\n",
+    "import warnings\n",
+    "warnings.filterwarnings('ignore')\n",
+    "from selenium.webdriver.common.by import By\n",
+    "import time"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 51,
+   "id": "eb10fd68",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "driver=webdriver.Chrome(r\"C:\\Users\\ADMIN\\Downloads\\chromedrive.exe\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 52,
+   "id": "bd29f92d",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "driver.get(\"https://www.flipkart.com/\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 53,
+   "id": "9fb2f0d5",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "search = driver.find_element(By.CLASS_NAME,\"_3704LK\")\n",
+    "search_button = driver.find_element(By.CLASS_NAME,\"L0Z3Pu\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 54,
+   "id": "e6bfed77",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "search.send_keys(\"sunglasses\")\n",
+    "search_button.click()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 55,
+   "id": "3f2401d7",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "B_name=[]\n",
+    "Price_list=[]\n",
+    "Product_Description=[]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 56,
+   "id": "fd3881ec",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#scraping Brand name from the given page\n",
+    "B_tags = driver.find_elements(By.XPATH,'//div[@class=\"_2WkVRV\"]')\n",
+    "for i in B_tags[0:100]:\n",
+    "    Brand =i.text\n",
+    "    B_name.append(Brand)\n",
+    "    \n",
+    "#scraping Price_list from the page\n",
+    "Price_tags = driver.find_elements(By.XPATH,'//div[@class=\"_30jeq3\"]')\n",
+    "for i in Price_tags[0:100]:\n",
+    "    Price = i.text\n",
+    "    Price_list.append(Price)\n",
+    "    \n",
+    "#scraping Poduct_Description from the page\n",
+    "Product_tags = driver.find_elements(By.XPATH,'//a[@class=\"IRpwTa\"]')\n",
+    "for i in Product_tags[0:100]:\n",
+    "    Description = i.text\n",
+    "    Product_Description.append(Description) "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 57,
+   "id": "8c3b7d9d",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "40 40 39\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(len(B_name),len(Price_list),len(Product_Description))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 58,
+   "id": "d7c7180c",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#scraping Brand name from the given page\n",
+    "B_tags = driver.find_elements(By.XPATH,'//div[@class=\"_2WkVRV\"]')\n",
+    "for i in B_tags[0:100]:\n",
+    "    Brand =i.text\n",
+    "    B_name.append(Brand)\n",
+    "    \n",
+    "#scraping Price_list from the page\n",
+    "Price_tags = driver.find_elements(By.XPATH,'//div[@class=\"_30jeq3\"]')\n",
+    "for i in Price_tags[0:100]:\n",
+    "    Price = i.text\n",
+    "    Price_list.append(Price)\n",
+    "    \n",
+    "#scraping Poduct_Description from the page\n",
+    "Product_tags = driver.find_elements(By.XPATH,'//a[@class=\"IRpwTa\"]')\n",
+    "for i in Product_tags[0:100]:\n",
+    "    Description = i.text\n",
+    "    Product_Description.append(Description) "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 59,
+   "id": "8478ffde",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "80 80 78\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(len(B_name),len(Price_list),len(Product_Description))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 60,
+   "id": "a8699a06",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#scraping Brand name from the given page\n",
+    "B_tags = driver.find_elements(By.XPATH,'//div[@class=\"_2WkVRV\"]')\n",
+    "for i in B_tags[0:100]:\n",
+    "    Brand =i.text\n",
+    "    B_name.append(Brand)\n",
+    "    \n",
+    "#scraping Price_list from the page\n",
+    "Price_tags = driver.find_elements(By.XPATH,'//div[@class=\"_30jeq3\"]')\n",
+    "for i in Price_tags[0:100]:\n",
+    "    Price = i.text\n",
+    "    Price_list.append(Price)\n",
+    "    \n",
+    "#scraping Poduct_Description from the page\n",
+    "Product_tags = driver.find_elements(By.XPATH,'//a[@class=\"IRpwTa\"]')\n",
+    "for i in Product_tags[0:100]:\n",
+    "    Description = i.text\n",
+    "    Product_Description.append(Description) "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 61,
+   "id": "64926aed",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "100\n",
+      "100\n",
+      "100\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "(None, None, None)"
+      ]
+     },
+     "execution_count": 61,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "print(len(B_name[:100])),print(len(Price_list[:100])),print(len(Product_Description[:100]))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 62,
+   "id": "c9038710",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "sun_gl=pd.DataFrame({})\n",
+    "sun_gl['B_name']=B_name[:100]\n",
+    "sun_gl['Price_list']=Price_list[:100]\n",
+    "sun_gl['Product_Description']=Product_Description[:100]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 63,
+   "id": "267ca2cc",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>B_name</th>\n",
+       "      <th>Price_list</th>\n",
+       "      <th>Product_Description</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>SRPM</td>\n",
+       "      <td>₹149</td>\n",
+       "      <td>UV Protection Wayfarer Sunglasses (50)</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>Elligator</td>\n",
+       "      <td>₹149</td>\n",
+       "      <td>UV Protection Cat-eye, Retro Square, Oval, Rou...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>Elligator</td>\n",
+       "      <td>₹149</td>\n",
+       "      <td>UV Protection Wayfarer Sunglasses (53)</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>PIRASO</td>\n",
+       "      <td>₹268</td>\n",
+       "      <td>UV Protection Aviator Sunglasses (Free Size)</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>Elligator</td>\n",
+       "      <td>₹149</td>\n",
+       "      <td>UV Protection Aviator, Wayfarer Sunglasses (54)</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>...</th>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "      <td>...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>95</th>\n",
+       "      <td>Fastrack</td>\n",
+       "      <td>₹619</td>\n",
+       "      <td>Gradient, UV Protection Wayfarer Sunglasses (F...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>96</th>\n",
+       "      <td>Elligator</td>\n",
+       "      <td>₹149</td>\n",
+       "      <td>UV Protection Rectangular Sunglasses (52)</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>97</th>\n",
+       "      <td>SRPM</td>\n",
+       "      <td>₹169</td>\n",
+       "      <td>UV Protection, Mirrored Wayfarer Sunglasses (57)</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>98</th>\n",
+       "      <td>Fastrack</td>\n",
+       "      <td>₹549</td>\n",
+       "      <td>UV Protection Wayfarer Sunglasses (56)</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>99</th>\n",
+       "      <td>PIRASO</td>\n",
+       "      <td>₹182</td>\n",
+       "      <td>UV Protection Wayfarer Sunglasses (56)</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>100 rows × 3 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "       B_name Price_list                                Product_Description\n",
+       "0        SRPM       ₹149             UV Protection Wayfarer Sunglasses (50)\n",
+       "1   Elligator       ₹149  UV Protection Cat-eye, Retro Square, Oval, Rou...\n",
+       "2   Elligator       ₹149             UV Protection Wayfarer Sunglasses (53)\n",
+       "3      PIRASO       ₹268       UV Protection Aviator Sunglasses (Free Size)\n",
+       "4   Elligator       ₹149    UV Protection Aviator, Wayfarer Sunglasses (54)\n",
+       "..        ...        ...                                                ...\n",
+       "95   Fastrack       ₹619  Gradient, UV Protection Wayfarer Sunglasses (F...\n",
+       "96  Elligator       ₹149          UV Protection Rectangular Sunglasses (52)\n",
+       "97       SRPM       ₹169   UV Protection, Mirrored Wayfarer Sunglasses (57)\n",
+       "98   Fastrack       ₹549             UV Protection Wayfarer Sunglasses (56)\n",
+       "99     PIRASO       ₹182             UV Protection Wayfarer Sunglasses (56)\n",
+       "\n",
+       "[100 rows x 3 columns]"
+      ]
+     },
+     "execution_count": 63,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "sun_gl"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e1bec322",
+   "metadata": {},
+   "source": [
+    "# Ans.5"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 75,
+   "id": "f9f9ea9f",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import selenium\n",
+    "import pandas as pd\n",
+    "from selenium import webdriver\n",
+    "import warnings\n",
+    "warnings.filterwarnings('ignore')\n",
+    "from selenium.webdriver.common.by import By\n",
+    "import time"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 76,
+   "id": "3dd762e5",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "driver=webdriver.Chrome(r\"C:\\Users\\ADMIN\\Downloads\\chromedrive.exe\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 77,
+   "id": "0f20d979",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "driver.get(\"https://www.flipkart.com/\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 78,
+   "id": "056444fd",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "search = driver.find_element(By.CLASS_NAME,\"_3704LK\")\n",
+    "search_button = driver.find_element(By.CLASS_NAME,\"L0Z3Pu\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 79,
+   "id": "502897ab",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "search.send_keys(\"iphone11 phone\")\n",
+    "search_button.click()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 80,
+   "id": "27710236",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "Rating_list=[]\n",
+    "Review_summary=[]\n",
+    "Full_review=[]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 81,
+   "id": "03f3e963",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#scraping rating from the given page\n",
+    "Rating_tags = driver.find_elements(By.XPATH,'//div[@class=\"_3LWZlK _1BLPMq\"]')\n",
+    "for i in Rating_tags[0:100]:\n",
+    "    Rating =i.text\n",
+    "    Rating_list.append(Rating)\n",
+    "    \n",
+    "#scraping summary from the page\n",
+    "Review_tags = driver.find_elements(By.XPATH,'//p[@class=\"_2-N8zT\"]')\n",
+    "for i in Review_tags[0:100]:\n",
+    "    Review = i.text\n",
+    "    Review_summary.append(Review)\n",
+    "    \n",
+    "#scraping reviews from the page\n",
+    "Full_tags = driver.find_elements(By.XPATH,'//div[@class]')\n",
+    "for i in Full_tags[0:100]:\n",
+    "    Full = i.text\n",
+    "    Full_review.append(Full)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 82,
+   "id": "f3d64ec1",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "8 10 100\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(len(Rating_tags),len(Review_summary),len(Full_review))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 84,
+   "id": "8d540599",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "100\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(len(Full_review[:100]))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 87,
+   "id": "41c856b1",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "iphone11_phone=pd.DataFrame({})\n",
+    "iphone11_phone['Full_review']=Full_review[:100]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 89,
+   "id": "fa12ad06",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Full_review</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>Explore Plus\\nLogin\\nBecome a Seller\\nMore\\nCart</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>Explore Plus\\nLogin\\nBecome a Seller\\nMore\\nCart</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td></td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>Explore Plus\\nLogin\\nBecome a Seller\\nMore\\nCart</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>Explore Plus</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>...</th>\n",
+       "      <td>...</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>95</th>\n",
+       "      <td></td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>96</th>\n",
+       "      <td>1GB and Below</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>97</th>\n",
+       "      <td>INTERNAL STORAGE</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>98</th>\n",
+       "      <td>INTERNAL STORAGE</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>99</th>\n",
+       "      <td>BATTERY CAPACITY</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>100 rows × 1 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                                         Full_review\n",
+       "0   Explore Plus\\nLogin\\nBecome a Seller\\nMore\\nCart\n",
+       "1   Explore Plus\\nLogin\\nBecome a Seller\\nMore\\nCart\n",
+       "2                                                   \n",
+       "3   Explore Plus\\nLogin\\nBecome a Seller\\nMore\\nCart\n",
+       "4                                       Explore Plus\n",
+       "..                                               ...\n",
+       "95                                                  \n",
+       "96                                     1GB and Below\n",
+       "97                                  INTERNAL STORAGE\n",
+       "98                                  INTERNAL STORAGE\n",
+       "99                                  BATTERY CAPACITY\n",
+       "\n",
+       "[100 rows x 1 columns]"
+      ]
+     },
+     "execution_count": 89,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "iphone11_phone"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "9a65d264",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "5b65f60b",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import selenium\n",
+    "import pandas as pd\n",
+    "from selenium import webdriver\n",
+    "import warnings\n",
+    "warnings.filterwarnings('ignore')\n",
+    "from selenium.webdriver.common.by import By\n",
+    "import time"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "bb49b245",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "driver=webdriver.Chrome(r\"C:\\Users\\ADMIN\\Downloads\\chromedrive.exe\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "b7268a1e",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "driver.get(\"https://www.amazon.in/\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "decc31a4",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "search = driver.find_element(By.XPATH,'//input[@id=\"twotabsearchtextbox\"]')\n",
+    "search_button = driver.find_element(By.XPATH,'//input[@class=\"nav-input nav-progressive-attribute\"]')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "b0d7e237",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "search.send_keys(\"Laptop\")\n",
+    "search_button.click()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "id": "e3d9c6db",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "Title_T = []\n",
+    "Ratings_list = []\n",
+    "Price_MRP = []"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "id": "7018ea30",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#scraping title from the given page\n",
+    "Title_tags = driver.find_elements(By.XPATH,'//span[@class=\"a-size-medium a-color-base a-text-normal\"]')\n",
+    "for i in Title_tags[0:10]:\n",
+    "    Title =i.text\n",
+    "    Title_T.append(Title)\n",
+    "    \n",
+    "#scraping rating from the page\n",
+    "Rating_tags = driver.find_elements(By.XPATH,'//span[@class=\"a-size-base\"]')\n",
+    "for i in Rating_tags[0:10]:\n",
+    "    Rating = i.text\n",
+    "    Ratings_list.append(Rating)\n",
+    "    \n",
+    "#scraping price from the page\n",
+    "Price_list = driver.find_elements(By.XPATH,'//span[@class=\"a-price-whole\"]')\n",
+    "for i in Price_list[0:10]:\n",
+    "    Price = i.text\n",
+    "    Price_MRP.append(Price)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "id": "e3a03861",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "10 10 10\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(len(Title_T),len(Ratings_list),len(Price_MRP))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 20,
+   "id": "bfb45f24",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "Laptop=pd.DataFrame({})\n",
+    "Laptop['Title_T']=Title_T[:10]\n",
+    "Laptop['Ratings_list']= Ratings_list[:10]\n",
+    "Laptop['Price_MRP']=Price_MRP[:10]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 21,
+   "id": "94eada65",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Title_T</th>\n",
+       "      <th>Ratings_list</th>\n",
+       "      <th>Price_MRP</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>Samsung Galaxy Book2 (NP750) Intel 12th Gen co...</td>\n",
+       "      <td>4.1</td>\n",
+       "      <td>76,990</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>ASUS TUF Dash F15, Intel Core i7-12650H 12th G...</td>\n",
+       "      <td>4.0</td>\n",
+       "      <td>99,990</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>ASUS TUF Gaming F15 (2022), 15.6\"(39.62 cms) F...</td>\n",
+       "      <td>4.4</td>\n",
+       "      <td>94,990</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>Lenovo Legion S7 Intel Core i7 12th Gen 16\"(40...</td>\n",
+       "      <td>4.1</td>\n",
+       "      <td>1,48,020</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>LG Gram16 Intel EVO-[12th Gen Core i7/Win11/16...</td>\n",
+       "      <td>3.6</td>\n",
+       "      <td>82,990</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>5</th>\n",
+       "      <td>Dell G15-5520 Gaming Laptop, i7-12650H, 16GB D...</td>\n",
+       "      <td>3.0</td>\n",
+       "      <td>1,23,990</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>6</th>\n",
+       "      <td>ASUS VivoBook K15 OLED (2021), 15.6-inch FHD O...</td>\n",
+       "      <td>3.6</td>\n",
+       "      <td>69,990</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>7</th>\n",
+       "      <td>(Renewed) HP 840g3 Elitebook 14 Inch Screen La...</td>\n",
+       "      <td>3.0</td>\n",
+       "      <td>31,592</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>8</th>\n",
+       "      <td>Lenovo ThinkPad E14 Intel Core i7 12th Gen 14\"...</td>\n",
+       "      <td>5.0</td>\n",
+       "      <td>98,990</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9</th>\n",
+       "      <td>(Renewed) Dell Latitude Laptop 7390 Intel Core...</td>\n",
+       "      <td>4.5</td>\n",
+       "      <td>30,393</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                                             Title_T Ratings_list Price_MRP\n",
+       "0  Samsung Galaxy Book2 (NP750) Intel 12th Gen co...          4.1    76,990\n",
+       "1  ASUS TUF Dash F15, Intel Core i7-12650H 12th G...          4.0    99,990\n",
+       "2  ASUS TUF Gaming F15 (2022), 15.6\"(39.62 cms) F...          4.4    94,990\n",
+       "3  Lenovo Legion S7 Intel Core i7 12th Gen 16\"(40...          4.1  1,48,020\n",
+       "4  LG Gram16 Intel EVO-[12th Gen Core i7/Win11/16...          3.6    82,990\n",
+       "5  Dell G15-5520 Gaming Laptop, i7-12650H, 16GB D...          3.0  1,23,990\n",
+       "6  ASUS VivoBook K15 OLED (2021), 15.6-inch FHD O...          3.6    69,990\n",
+       "7  (Renewed) HP 840g3 Elitebook 14 Inch Screen La...          3.0    31,592\n",
+       "8  Lenovo ThinkPad E14 Intel Core i7 12th Gen 14\"...          5.0    98,990\n",
+       "9  (Renewed) Dell Latitude Laptop 7390 Intel Core...          4.5    30,393"
+      ]
+     },
+     "execution_count": 21,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "Laptop"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "818e23b6",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.9.12"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
